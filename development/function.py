@@ -9,18 +9,25 @@ firebase.authentication = authentication
 # user = authentication.get_user()
 # print (user.firebase_auth_token)
 def post(sensor,value):
-    result = firebase.post('/data/'+sensor, {"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-    print (result)
-    result_get = firebase.get('/data/'+sensor, str(result["name"]))
-    print (result_get)
+    try:
+        result = firebase.post('/data/'+sensor, {"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+        print (result)
+    except expression as identifier:
+        pass
+    # result_get = firebase.get('/data/'+sensor, str(result["name"]))
+    # print (result_get)
 def put(sensor, value):
     # result = firebase.put('/realtime', {sensor+{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}})
     # print (result)
-    tes = {"sensor":{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}
+    # tes = {"sensor":{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}
     # print (({sensor+{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}))
-    print ({sensor:{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}})
-    result = firebase.put("/realtime", sensor ,{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-    print (result)
+    # print ({sensor:{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}})
+    try:
+        result = firebase.put("/realtime", sensor ,{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+        print (result)
+    except expression as identifier:
+        pass
+    
     # result_get = firebase.get('/data/'+sensor, str(result["name"]))
 
 def pesan(no,pesan):
