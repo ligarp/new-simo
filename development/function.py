@@ -3,16 +3,27 @@ import datetime
 import time
 import urllib3
 import json
+from urllib.request import urlopen
+
 authentication = firebase.FirebaseAuthentication('e2ApT5zWI5VtmaqSEseX6JLglQSKlBgmFgwpyWDB', 'om.ragil7@gmail.com', extra={'id': 123})
 firebase = firebase.FirebaseApplication('https://websocket-dev.firebaseio.com', authentication=None)
 firebase.authentication = authentication
+def cek():
+    try:
+        response = urlopen("http://google.com",timeout=5)
+        return (True)
+    except Exception as e:
+        return (False)
 # user = authentication.get_user()
 # print (user.firebase_auth_token)
 def post(sensor,value):
     try:
-        result = firebase.post('/data/'+sensor, {"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-        print (result)
-    except expression as identifier:
+        if cek():
+            result = firebase.post('/data/'+sensor, {"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            print (result)
+        else:
+            pass
+    except Exception as e:
         pass
     # result_get = firebase.get('/data/'+sensor, str(result["name"]))
     # print (result_get)
@@ -23,9 +34,10 @@ def put(sensor, value):
     # print (({sensor+{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}))
     # print ({sensor:{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}})
     try:
-        result = firebase.put("/realtime", sensor ,{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-        print (result)
-    except expression as identifier:
+        if cek():
+            result = firebase.put("/realtime", sensor ,{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            print (result)
+    except Exception as e:
         pass
     
     # result_get = firebase.get('/data/'+sensor, str(result["name"]))

@@ -1,12 +1,11 @@
 import paho.mqtt.client as mqtt
 import smsgateway
 import function
-import datetime
 username = "ragil"
 password = "ragil"
 topic = "lab/#"
 server = "192.168.100.58"
-client = mqtt.Client("client-"+str(datetime.datetime.now()))
+client = mqtt.Client("client")
 client.username_pw_set(username,password)
 
 def on_connect(client, userdata, rc):
@@ -14,7 +13,7 @@ def on_connect(client, userdata, rc):
 def on_message(client, userdata, msg):
         print("Topic :" + str(msg.topic))
         print("Message :" + str(msg.payload.decode("utf-8")))
-        print ("client"+str(datetime.datetime.now()))
+
         if(str(msg.topic)=="lab/pir"):
                 
                 if (msg.payload.decode("utf-8")=="0"):
@@ -23,22 +22,23 @@ def on_message(client, userdata, msg):
                         value = "Terdapat Aktifitas"
                 else:
                         value = "Not Defined"
-                function.put("pir",value)
+                # function.put("pir",value)
 
-        if(str(msg.topic)=="lab/temperature"):
+        if (str(msg.topic)=="lab/temperature"):
                 value = str(msg.payload.decode("utf-8"))
-                function.put("temperature",value)
+                # function.put("temperature",value)
 
-        if(str(msg.topic)=="lab/smoke"):
+        if (str(msg.topic)=="lab/smoke"):
                 # smsgateway.kirim_pesan("082220488112","Tingkat Asap: " + str(msg.payload.decode("utf-8")))
                 # function.post("smoke",str(msg.payload.decode("utf-8")))
-                function.put("smoke",str(msg.payload.decode("utf-8")))
+                # function.put("smoke",str(msg.payload.decode("utf-8")))
+                print("smoke")
 
-        if(str(msg.topic)=="lab/current"):
+        if (str(msg.topic)=="lab/current"):
                 value = str(msg.payload.decode("utf-8"))
-                function.put("current",value)
+                # function.put("current",value)
 
-        if(str(msg.topic)=="lab/ldr"):
+        if (str(msg.topic)=="lab/ldr"):
                 print(type(msg.payload.decode("utf-8")))
                 ldr = int(msg.payload.decode("utf-8"))
                 if (ldr > 800):
@@ -47,7 +47,7 @@ def on_message(client, userdata, msg):
                         value = "Normal"
                 elif (ldr > 0 and ldr < 300):
                         value = "Redup/Mati"
-                function.put("ldr",value)
+                # function.put("ldr",value)
 
         # if(str(msg.topic)=="lab/ldr"):
         #         value = "Not Defined"
