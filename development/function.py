@@ -19,7 +19,10 @@ def cek():
 def post(sensor,value):
     try:
         if cek():
-            firebase.post('/data/'+sensor, {"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            firebase.post('/data/'+sensor, {"value":value,"time": str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))})
+            print ("Sukses : "+sensor)
+            
+            
         else:
             pass
     except Exception as e:
