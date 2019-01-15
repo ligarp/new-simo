@@ -51,14 +51,14 @@ def on_message(client, userdata, msg):
                 value = str(msg.payload.decode("utf-8"))
                 if ((datetime.datetime.now()-tSmoke)>=delayUpdate) :
                         function.post("smoke",value)
+                        tSmoke = datetime.datetime.now()
                 
 
         if(str(msg.topic)=="lab/current"):
                 value = str(msg.payload.decode("utf-8"))
-                if ((datetime.datetime.now()-tDefault)>=delayUpdate) :
+                if ((datetime.datetime.now()-tDefault1)>=delayUpdate) :
                         function.post("current",value)
                         tDefault1 = datetime.datetime.now()
-                
 
         if(str(msg.topic)=="lab/ldr"):
         #         print(type(msg.payload.decode("utf-8")))
@@ -72,6 +72,7 @@ def on_message(client, userdata, msg):
                 if ((datetime.datetime.now()-tDefault2)>=delayUpdate):
                         function.post("ldr",value)
                         tDefault2 = datetime.datetime.now()
+                        
                 
 
         # if(str(msg.topic)=="lab/ldr"):
