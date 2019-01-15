@@ -15,6 +15,8 @@ tDefault = datetime.datetime.now()
 tDefault1 = datetime.datetime.now()
 tDefault2 = datetime.datetime.now()
 delayUpdate = timedelta(minutes=10)
+print("Running at")
+print(str(datetime.datetime.now()))
 
 def on_connect(client, userdata, rc):
         print ("connected" + str(rc))
