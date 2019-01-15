@@ -19,8 +19,7 @@ def cek():
 def post(sensor,value):
     try:
         if cek():
-            result = firebase.post('/data/'+sensor, {"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-            print (result)
+            firebase.post('/data/'+sensor, {"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
         else:
             pass
     except Exception as e:
@@ -35,8 +34,7 @@ def put(sensor, value):
     # print ({sensor:{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}})
     try:
         if cek():
-            result = firebase.put("/realtime", sensor ,{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-            print (result)
+            firebase.put("/realtime", sensor ,{"value":value,"time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
     except Exception as e:
         pass
     

@@ -2,19 +2,27 @@ import paho.mqtt.client as mqtt
 import smsgateway
 import function
 import datetime
+from datetime import timedelta
 username = "ragil"
 password = "ragil"
 topic = "lab/#"
 server = "192.168.100.58"
 client = mqtt.Client("client-"+str(datetime.datetime.now()))
 client.username_pw_set(username,password)
+tTemperature = datetime.datetime.now()
+tSmoke = datetime.datetime.now()
+tDefault = datetime.datetime.now()
+tDefault1 = datetime.datetime.now()
+tDefault2 = datetime.datetime.now()
+delayUpdate = timedelta(minutes=10)
 
 def on_connect(client, userdata, rc):
         print ("connected" + str(rc))
 def on_message(client, userdata, msg):
-        print("Topic :" + str(msg.topic))
-        print("Message :" + str(msg.payload.decode("utf-8")))
-        print ("client"+str(datetime.datetime.now()))
+        # print("Topic :" + str(msg.topic))
+        global tDefault,tDefault1,tDefault2,tTemperature,tSmoke
+        # print("Message :" + str(msg.payload.decode("utf-8")))
+        # print ("client"+str(datetime.datetime.now()))
         if(str(msg.topic)=="lab/pir"):
                 
                 if (msg.payload.decode("utf-8")=="0"):
@@ -23,23 +31,37 @@ def on_message(client, userdata, msg):
                         value = "Terdapat Aktifitas"
                 else:
                         value = "Not Defined"
-                function.put("pir",value)
+                if ((datetime.datetime.now()-tDefault)>=delayUpdate) :
+                        function.post("pir",value)
+                        tDefault = datetime.datetime.now()
+                        
+                # function.put("pir",value)
 
         if(str(msg.topic)=="lab/temperature"):
                 value = str(msg.payload.decode("utf-8"))
-                function.put("temperature",value)
+                if ((datetime.datetime.now()-tTemperature)>=delayUpdate) :
+                        function.post("temperature",value)
+                        tTemperature = datetime.datetime.now()
+                
 
         if(str(msg.topic)=="lab/smoke"):
-                # smsgateway.kirim_pesan("082220488112","Tingkat Asap: " + str(msg.payload.decode("utf-8")))
-                # function.post("smoke",str(msg.payload.decode("utf-8")))
-                function.put("smoke",str(msg.payload.decode("utf-8")))
+        #         # smsgateway.kirim_pesan("082220488112","Tingkat Asap: " + str(msg.payload.decode("utf-8")))
+        #         # function.post("smoke",str(msg.payload.decode("utf-8")))
+        #         # function.put("smoke",str(msg.payload.decode("utf-8")))
+                value = str(msg.payload.decode("utf-8"))
+                if ((datetime.datetime.now()-tSmoke)>=delayUpdate) :
+                        function.post("smoke",value)
+                
 
         if(str(msg.topic)=="lab/current"):
                 value = str(msg.payload.decode("utf-8"))
-                function.put("current",value)
+                if ((datetime.datetime.now()-tDefault)>=delayUpdate) :
+                        function.post("current",value)
+                        tDefault1 = datetime.datetime.now()
+                
 
         if(str(msg.topic)=="lab/ldr"):
-                print(type(msg.payload.decode("utf-8")))
+        #         print(type(msg.payload.decode("utf-8")))
                 ldr = int(msg.payload.decode("utf-8"))
                 if (ldr > 800):
                         value = "Sangat Terang"
@@ -47,7 +69,10 @@ def on_message(client, userdata, msg):
                         value = "Normal"
                 elif (ldr > 0 and ldr < 300):
                         value = "Redup/Mati"
-                function.put("ldr",value)
+                if ((datetime.datetime.now()-tDefault2)>=delayUpdate):
+                        function.post("ldr",value)
+                        tDefault2 = datetime.datetime.now()
+                
 
         # if(str(msg.topic)=="lab/ldr"):
         #         value = "Not Defined"
