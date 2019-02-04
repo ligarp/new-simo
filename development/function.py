@@ -1,4 +1,5 @@
 from firebase import firebase
+from pyfcm import FCMNotification
 import datetime
 import time
 import urllib3
@@ -54,3 +55,8 @@ def pesan(no,pesan):
     print (r.status)
     print (json.loads(r.data))
 
+def notif(message):
+    push_service = FCMNotification(api_key="AAAA_mCm21w:APA91bGSUlb9rJ_A8Fi92Jcl_HEYlZduYaflPFq7lyx4akePCnuOdkmcu0ia9Yc0w7FuEtXNx7CMBERA1p-OMnA_2NZ-DPVaEJwhrtlKvdctBYxdEiJm-78-8B4nkXa4UmrjOsvZC45l")
+    result = result = push_service.notify_topic_subscribers(topic_name="simo-client-android", message_body=message)
+
+notif("tes")
