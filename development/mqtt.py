@@ -7,14 +7,16 @@ username = "ragil"
 password = "ragil"
 topic = "lab/#"
 server = "192.168.100.58"
-client = mqtt.Client("client-"+str(datetime.datetime.now()))
+client = mqtt.Client("client-fbclient")
 client.username_pw_set(username,password)
 tTemperature = datetime.datetime.now()
 tSmoke = datetime.datetime.now()
 tDefault = datetime.datetime.now()
 tDefault1 = datetime.datetime.now()
 tDefault2 = datetime.datetime.now()
+tNotif = datetime.datetime.now()
 delayUpdate = timedelta(minutes=10)
+delayNotif = timedelta(minutes=1)
 print("Running at")
 print(str(datetime.datetime.now()))
 
@@ -22,7 +24,7 @@ def on_connect(client, userdata, rc):
         print ("connected" + str(rc))
 def on_message(client, userdata, msg):
         # print("Topic :" + str(msg.topic))
-        global tDefault,tDefault1,tDefault2,tTemperature,tSmoke
+        global tDefault,tDefault1,tDefault2,tTemperature,tSmoke,tNotif
         # print("Message :" + str(msg.payload.decode("utf-8")))
         # print ("client"+str(datetime.datetime.now()))
         if(str(msg.topic)=="lab/pir"):
@@ -41,9 +43,14 @@ def on_message(client, userdata, msg):
 
         if(str(msg.topic)=="lab/temperature"):
                 value = str(msg.payload.decode("utf-8"))
-                if ((datetime.datetime.now()-tTemperature)>=delayUpdate) :
-                        function.post("temperature",value)
-                        tTemperature = datetime.datetime.now()
+                if ((datetime.datetime.now()-tTemperature)>=delayUpdate or int(value)>30) :
+                        if int(value)>30:
+                                function.post("temperature",value)
+                                tTemperature = datetime.datetime.now()
+                                function.notif("Suhu tidak wajar "+ str(value) +" derajat Celcius")
+                        else:
+                                function.post("temperature",value)
+                                tTemperature = datetime.datetime.now()
                 
 
         if(str(msg.topic)=="lab/smoke"):
@@ -51,9 +58,16 @@ def on_message(client, userdata, msg):
         #         # function.post("smoke",str(msg.payload.decode("utf-8")))
         #         # function.put("smoke",str(msg.payload.decode("utf-8")))
                 value = str(msg.payload.decode("utf-8"))
-                if ((datetime.datetime.now()-tSmoke)>=delayUpdate) :
-                        function.post("smoke",value)
-                        tSmoke = datetime.datetime.now()
+                if ((datetime.datetime.now()-tSmoke)>=delayUpdate or int(value)>204) :
+                        if int(value)>204:
+                                function.post("smoke",value)
+                                tSmoke = datetime.datetime.now()
+                                function.notif("Asap berbahaya")
+                                function.pesan("082220488112","Tingkat Asap Berbahaya!!")
+                        else:
+                                function.post("smoke",value)
+                                tSmoke = datetime.datetime.now()
+                        
                 
 
         if(str(msg.topic)=="lab/current"):
@@ -65,12 +79,10 @@ def on_message(client, userdata, msg):
         if(str(msg.topic)=="lab/ldr"):
         #         print(type(msg.payload.decode("utf-8")))
                 ldr = int(msg.payload.decode("utf-8"))
-                if (ldr > 800):
-                        value = "Sangat Terang"
-                elif (ldr < 800 and ldr > 300):
-                        value = "Normal"
+                if (ldr > 758):
+                        value = "Hidup"
                 elif (ldr > 0 and ldr < 300):
-                        value = "Redup/Mati"
+                        value = "Mati"
                 if ((datetime.datetime.now()-tDefault2)>=delayUpdate):
                         function.post("ldr",value)
                         tDefault2 = datetime.datetime.now()
