@@ -24,7 +24,7 @@ def on_connect(client, userdata, rc):
         print ("connected" + str(rc))
 def on_message(client, userdata, msg):
         # print("Topic :" + str(msg.topic))
-        global tDefault,tDefault1,tDefault2,tTemperature,tSmoke,tNotif
+        global tDefault,tDefault1,tDefault2,tTemperature,tSmoke,tNotif, delayNotif,delayUpdate
         # print("Message :" + str(msg.payload.decode("utf-8")))
         # print ("client"+str(datetime.datetime.now()))
         if(str(msg.topic)=="lab/pir"):
