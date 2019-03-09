@@ -44,7 +44,7 @@ def on_message(client, userdata, msg):
         if(str(msg.topic)=="lab/temperature"):
                 value = str(msg.payload.decode("utf-8"))
                 if ((datetime.datetime.now()-tTemperature)>=delayUpdate or int(value)>30) :
-                        if int(value)>30:
+                        if (int(value)>30):
                                 function.post("temperature",value)
                                 tTemperature = datetime.datetime.now()
                                 function.notif("Suhu tidak wajar "+ str(value) +" derajat Celcius")
@@ -59,7 +59,7 @@ def on_message(client, userdata, msg):
         #         # function.put("smoke",str(msg.payload.decode("utf-8")))
                 value = str(msg.payload.decode("utf-8"))
                 if ((datetime.datetime.now()-tSmoke)>=delayUpdate or int(value)>204) :
-                        if int(value)>204:
+                        if (int(value)>204):
                                 function.post("smoke",value)
                                 tSmoke = datetime.datetime.now()
                                 function.notif("Asap berbahaya")
