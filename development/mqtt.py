@@ -1,40 +1,46 @@
 import paho.mqtt.client as mqtt
 import smsgateway
+import fcm_client
 import function
 import datetime
 from datetime import timedelta
 username = "ragil"
 password = "ragil"
 topic = "lab/#"
-server = "192.168.100.58"
-client = mqtt.Client("client-fbclient")
+server = "192.168.100.9"
+client_name = str(datetime.datetime.now())
+client = mqtt.Client("client-"+client_name)
 client.username_pw_set(username,password)
-tTemperature = datetime.datetime.now()
-tSmoke = datetime.datetime.now()
-tDefault = datetime.datetime.now()
-tDefault1 = datetime.datetime.now()
-tDefault2 = datetime.datetime.now()
-tNotif = datetime.datetime.now()
+tTemperature = datetime.datetime.now() + timedelta(minutes=10)
+tSmoke = datetime.datetime.now() - timedelta(minutes=10)
+tDefault = datetime.datetime.now() - timedelta(minutes=10)
+tDefault1 = datetime.datetime.now() - timedelta(minutes=10)
+tDefault2 = datetime.datetime.now() - timedelta(minutes=10)
+tAlertTemperature = datetime.datetime.now() - timedelta(minutes=2)
+tAlertSmoke = datetime.datetime.now() - timedelta(minutes=2)
 delayUpdate = timedelta(minutes=10)
-delayNotif = timedelta(minutes=1)
+delayAlert = timedelta(minutes=2)
 print("Running at")
 print(str(datetime.datetime.now()))
 
 def on_connect(client, userdata, rc):
         print ("connected" + str(rc))
 def on_message(client, userdata, msg):
-        # print("Topic :" + str(msg.topic))
-        global tDefault,tDefault1,tDefault2,tTemperature,tSmoke,tNotif, delayNotif,delayUpdate
+        global tDefault,tDefault1,tDefault2,tTemperature,tSmoke, tAlertSmoke,tAlertTemperature,delayAlert
         # print("Message :" + str(msg.payload.decode("utf-8")))
         # print ("client"+str(datetime.datetime.now()))
-        if(str(msg.topic)=="lab/pir"):
-                
-                if (msg.payload.decode("utf-8")=="0"):
-                        value = "Tidak ada Aktifitas"
-                elif (msg.payload.decode("utf-8")=="1"):
-                        value = "Terdapat Aktifitas"
-                else:
-                        value = "Not Defined"
+        if(str(msg.topic)=="lab/temperatureTes"):
+                value = str(msg.payload.decode("utf-8"))
+                print (tAlertTemperature)
+
+                if ((datetime.datetime.now()-tAlertTemperature)>=delayAlert and int(value) > 30) :
+                        function.post("temperature",value)
+                        smsgateway.kirim_pesan('082220488112','Peringatan !! Suhu berbahaya. '+value+ '° Celcius')
+                        fcm_client.app_notification('Peringatan !! Suhu berbahaya. '+value+ '° Celcius\nWwaktu: '+str(datetime.datetime.now())+'')
+                        tAlertTemperature = datetime.datetime.now()
+        #dummy
+        if(str(msg.topic)=="lab/pir"):                
+                value = msg.payload.decode("utf-8")
                 if ((datetime.datetime.now()-tDefault)>=delayUpdate) :
                         function.post("pir",value)
                         tDefault = datetime.datetime.now()
@@ -43,14 +49,14 @@ def on_message(client, userdata, msg):
 
         if(str(msg.topic)=="lab/temperature"):
                 value = str(msg.payload.decode("utf-8"))
-                if ((datetime.datetime.now()-tTemperature)>=delayUpdate or int(value)>30) :
-                        if (int(value)>30):
-                                function.post("temperature",value)
-                                tTemperature = datetime.datetime.now()
-                                function.notif("Suhu tidak wajar "+ str(value) +" derajat Celcius")
-                        else:
-                                function.post("temperature",value)
-                                tTemperature = datetime.datetime.now()
+                if ((datetime.datetime.now()-tAlertTemperature)>=delayAlert and int(value) > 30) :
+                        function.post("temperature",value)
+                        smsgateway.kirim_pesan('082220488112','Peringatan !! Suhu berbahaya. '+value+ '° Celcius')
+                        fcm_client.app_notification('Peringatan !! Suhu berbahaya. '+value+ '° Celcius\nWwaktu: '+str(datetime.datetime.now())+'')
+                        tAlertTemperature = datetime.datetime.now()
+                elif ((datetime.datetime.now()-tTemperature)>=delayUpdate) :
+                        function.post("temperature",value)
+                        tTemperature = datetime.datetime.now()
                 
 
         if(str(msg.topic)=="lab/smoke"):
@@ -58,16 +64,14 @@ def on_message(client, userdata, msg):
         #         # function.post("smoke",str(msg.payload.decode("utf-8")))
         #         # function.put("smoke",str(msg.payload.decode("utf-8")))
                 value = str(msg.payload.decode("utf-8"))
-                if ((datetime.datetime.now()-tSmoke)>=delayUpdate or int(value)>204) :
-                        if (int(value)>204):
-                                function.post("smoke",value)
-                                tSmoke = datetime.datetime.now()
-                                function.notif("Asap berbahaya")
-                                function.pesan("082220488112","Tingkat Asap Berbahaya!!")
-                        else:
-                                function.post("smoke",value)
-                                tSmoke = datetime.datetime.now()
-                        
+                if ((datetime.datetime.now()-tAlertSmoke)>=delayAlert) and int(value)>403 :
+                        function.post("smoke",value)
+                        smsgateway.kirim_pesan("082220488112",'Tingkat asap berbahaya.')
+                        fcm_client.app_notification('Waktu: '+str(datetime.datetime.now())+'Tingkat asap berbahaya.')
+                        tAlertSmoke = datetime.datetime.now()
+                elif ((datetime.datetime.now()-tSmoke)>=delayUpdate) :
+                        function.post("smoke",value)
+                        tSmoke = datetime.datetime.now()
                 
 
         if(str(msg.topic)=="lab/current"):
@@ -78,26 +82,11 @@ def on_message(client, userdata, msg):
 
         if(str(msg.topic)=="lab/ldr"):
         #         print(type(msg.payload.decode("utf-8")))
-                ldr = int(msg.payload.decode("utf-8"))
-                if (ldr > 758):
-                        value = "Hidup"
-                elif (ldr > 0 and ldr < 300):
-                        value = "Mati"
+                value = int(msg.payload.decode("utf-8"))
                 if ((datetime.datetime.now()-tDefault2)>=delayUpdate):
                         function.post("ldr",value)
                         tDefault2 = datetime.datetime.now()
-                        
-                
 
-        # if(str(msg.topic)=="lab/ldr"):
-        #         value = "Not Defined"
-        #         if (msg.payload.decode("utf-8")>800):
-        #                 value = "Sangat Terang"
-        #         elif (msg.payload.decode("utf-8")<800 and msg.payload.decode("utf-8") > 300):
-        #                 value = "Normal"
-        #         elif (msg.payload.decode("utf-8")>0 and msg.payload.decode("utf-8")<300):
-        #                 value = "Redup"
-        #         function.put("ldr","tes")
 
 
 client.on_message = on_message

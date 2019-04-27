@@ -1,6 +1,8 @@
 import time
 import urllib3
 import json
+import datetime
+import random
 def pesan(no,pesan):
     http = urllib3.PoolManager()
     data ={"Content":{"phone_number": str(no),"message": str(pesan),"device_id": 107132}}
@@ -12,4 +14,4 @@ def pesan(no,pesan):
     print (json.loads(r.data))
 def kirim_pesan(nomer,isi_pesan):
     time.sleep(5)
-    pesan(nomer,'[Simo]--'+ str(isi_pesan))
+    pesan(nomer,str(random.randint(1000,9999))+'->msg_id\n'+str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))+'\n'+ str(isi_pesan))
