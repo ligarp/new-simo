@@ -7,7 +7,7 @@ from datetime import timedelta
 username = "ragil"
 password = "ragil"
 topic = "lab/#"
-server = "192.168.100.9"
+server = "192.168.100.58"
 client_name = str(datetime.datetime.now())
 client = mqtt.Client("client-"+client_name)
 client.username_pw_set(username,password)
