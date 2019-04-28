@@ -49,7 +49,7 @@ def on_message(client, userdata, msg):
 
         if(str(msg.topic)=="lab/temperature"):
                 value = str(msg.payload.decode("utf-8"))
-                if ((datetime.datetime.now()-tAlertTemperature)>=delayAlert and int(value) > 30) :
+                if ((datetime.datetime.now()-tAlertTemperature)>=delayAlert and int(value) > 32) :
                         function.post("temperature",value)
                         smsgateway.kirim_pesan('082220488112','Peringatan !! Suhu berbahaya. '+value+ '° Celcius')
                         fcm_client.app_notification('Peringatan !! Suhu berbahaya. '+value+ '° Celcius\nWwaktu: '+str(datetime.datetime.now())+'')
