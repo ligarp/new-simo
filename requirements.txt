@@ -1,0 +1,7 @@
+pyfcm==1.4.5
+urllib3==1.22
+python_firebase==1.2
+firebase==3.0.1
+protobuf==3.7.1
+paho_mqtt==1.4.0
+pyserial==3.4
