@@ -13,5 +13,6 @@ def pesan(no,pesan):
     print (r.status)
     print (json.loads(r.data))
 def kirim_pesan(nomer,isi_pesan):
-    time.sleep(5)
-    pesan(nomer,str(random.randint(1000,9999))+'->msg_id\n'+str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))+'\n'+ str(isi_pesan))
+     for i in range(2):
+        time.sleep(5)
+        pesan(nomer,str(random.randint(1000,9999))+'->msg_id\n'+str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))+'\n'+ str(isi_pesan))

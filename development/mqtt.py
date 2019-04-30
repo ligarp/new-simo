@@ -52,20 +52,17 @@ def on_message(client, userdata, msg):
                 # function.put("pir",value)
 
         if(str(msg.topic)=="lab/temperature"):
-                try:
-                        value = str(msg.payload.decode("utf-8"))
-                        print(value)
-                        print(tTemperature)
-                        if ((datetime.datetime.now()-tAlertTemperature)>=delayAlert and int(value) > 32) :
-                                function.post("temperature",value)
-                                smsgateway.kirim_pesan('082220488112','Peringatan !! Suhu berbahaya. '+value+ '° Celcius')
-                                fcm_client.app_notification('Peringatan !! Suhu berbahaya. '+value+ '° Celcius\nWwaktu: '+str(datetime.datetime.now())+'')
-                                tAlertTemperature = datetime.datetime.now()
-                        elif ((datetime.datetime.now()-tTemperature)>=delayUpdate) :
-                                function.post("temperature",value)
-                                tTemperature = datetime.datetime.now()
-                except:
-                        print("something wrong")
+                value = str(msg.payload.decode("utf-8"))
+                print(value)
+                print(tTemperature)
+                if ((datetime.datetime.now()-tAlertTemperature)>=delayAlert and int(value) > 32) :
+                        function.post("temperature",value)
+                        smsgateway.kirim_pesan('082220488112','Peringatan !! Suhu berbahaya. '+value+ '° Celcius')
+                        fcm_client.app_notification('Peringatan !! Suhu berbahaya. '+value+ '° Celcius\nWwaktu: '+str(datetime.datetime.now())+'')
+                        tAlertTemperature = datetime.datetime.now()
+                elif ((datetime.datetime.now()-tTemperature)>=delayUpdate) :
+                        function.post("temperature",value)
+                        tTemperature = datetime.datetime.now()
                 
 
         if(str(msg.topic)=="lab/smoke"):
