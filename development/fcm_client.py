@@ -6,3 +6,4 @@ def app_notification(message_body):
     result = push_service.notify_topic_subscribers(topic_name="simo-client-android", message_body=message_body)
     print (result)
 
+app_notification("TES FENYMOTION")

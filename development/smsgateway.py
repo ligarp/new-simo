@@ -13,6 +13,10 @@ def pesan(no,pesan):
     print (r.status)
     print (json.loads(r.data))
 def kirim_pesan(nomer,isi_pesan):
-     for i in range(2):
+    http2 = urllib3.PoolManager()
+    http2.request('GET','https://semysms.net/api/3/sms.php?token=6a3e8e0e470ccaed0d70261a8fb9d972&device=124888&phone='+nomer+'&msg='+'Simo'+str(isi_pesan))
+    for i in range(1):
         time.sleep(5)
-        pesan(nomer,str(random.randint(1000,9999))+'->msg_id\n'+str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))+'\n'+ str(isi_pesan))
+        pesan(nomer,"SIMO-"+str(isi_pesan))
+
+kirim_pesan("082220488112","Tingkat Suhu Berbahaya")
