@@ -1,4 +1,4 @@
-urllib3==1.22
+urllib3==1.26.5
 python_firebase==1.2
 pyfcm==1.4.5
 firebase==3.0.1
